@@ -1,0 +1,37 @@
+html {
+    background-color: #f5f6f7;
+    font-family: Futura, "ProximaNova Regular", "Helvetica Neue", Helvetica,
+        Arial, sans-serif;
+}
+
+.input {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.float-end {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.mb-2 {
+    margin-bottom: 2%;
+}
+
+.mt-5 {
+    margin-top: 5%;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.col-25 {
+    width: 25%;
+}
+
+.col-75 {
+    width: 75%;
+}
