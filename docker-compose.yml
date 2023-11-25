@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  nginx:
+    build:
+      context: ./frontend
+      dockerfile: "Dockerfile.${ENVIRONMENT}"
+    env_file: "./frontend/.env.${ENVIRONMENT}"
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    command: nginx -g 'daemon off;'
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: "Dockerfile.${ENVIRONMENT}"
+    env_file: "./backend/.env.${ENVIRONMENT}"
+    depends_on:
+      - db
+    command: ./app
+
+  db:
+    image: redis:7.2.3
+    volumes:
+      - "redis_data_${ENVIRONMENT}:/data"
+
+volumes:
+  redis_data_production:
+  redis_data_development:
