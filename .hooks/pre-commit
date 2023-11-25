@@ -1,0 +1,16 @@
+#!/bin/bash
+
+cd frontend || exit
+npm run check
+npm run format
+npm run lint
+
+cd ../backend || exit
+gofmt -s -w ./*.go
+
+# golangci-lint run
+# docker run -t --rm \
+#     -v "$(pwd)":/app \
+#     -v ~/.cache/golangci-lint/v1.55.2:/root/.cache \
+#     -w /app golangci/golangci-lint:latest golangci-lint run \
+#     -v
