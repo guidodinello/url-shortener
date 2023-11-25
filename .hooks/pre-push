@@ -4,4 +4,5 @@ cd frontend || exit
 npm run test
 
 cd ../backend || exit
+go mod tidy
 go test ./...

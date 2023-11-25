@@ -1,16 +1,26 @@
 #!/bin/bash
 
+# staged_files=$(git diff --staged --name-only --diff-filter=ACM)
+# config_files=$(echo "$staged_files" | grep -E '\.(json|yml|yaml)$' | sed 's/^/..\//')
+# js_files=$(echo "$staged_files" | grep -E '\.(js|jsx)$' | sed 's/^/..\//')
+# svelte_files=$(echo "$staged_files" | grep -E '\.(svelte)$' | sed 's/^/..\//')
+# go_files=$(echo "$staged_files" | grep -E '\.(go)$' | sed 's/^/..\//')
+
 cd frontend || exit
 npm run check
 npm run format
 npm run lint
 
 cd ../backend || exit
-gofmt -s -w ./*.go
+shopt -s globstar nullglob
+for file in ./**/*.go; do
+    formatted=$(gofmt -l -s "$file")
+    if [ -n "$formatted" ]; then
+        gofmt -s -w "$file" && echo "File $file was formatted"
+    fi
+done
+echo "Go files formatted!"
 
-# golangci-lint run
-# docker run -t --rm \
-#     -v "$(pwd)":/app \
-#     -v ~/.cache/golangci-lint/v1.55.2:/root/.cache \
-#     -w /app golangci/golangci-lint:latest golangci-lint run \
-#     -v
+# docker run -t --rm -v $(pwd):/app -v ~/.cache/golangci-lint/latest:/root/.cache -w /app golangci/golangci-lint:latest golangci-lint run -v
+# hay que cambiar go.mod version a 1.21.3 para que ande
+# needs docker daemon running

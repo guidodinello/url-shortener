@@ -3,10 +3,10 @@
 # Move to root directory
 cd "$(dirname "$0")/.." || exit
 
-# Move files to .git/hooks
-cp .hooks/pre-commit .git/hooks/pre-commit
-cp .hooks/pre-push .git/hooks/pre-push
-
 # Make files executable
-chmod +x .git/hooks/pre-commit
-chmod +x .git/hooks/pre-push
+chmod +x .hooks/pre-commit
+chmod +x .hooks/pre-push
+
+# Move files to .git/hooks
+ln -s .hooks/pre-commit .git/hooks/pre-commit
+ln -s .hooks/pre-push .git/hooks/pre-push
