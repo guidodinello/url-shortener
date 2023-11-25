@@ -5,6 +5,6 @@ type RequestData struct {
 }
 
 type ResponseData struct {
-	ShortUrl string `json:"shortUrl"`
-	Url      string `json:"url"`
+	Key string `json:"shortUrl"`
+	Url string `json:"url"`
 }

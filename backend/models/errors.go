@@ -1,8 +1,20 @@
 package models
 
-import "errors"
+import (
+	"encoding/json"
+	"errors"
+)
 
-var ErrNotFound = errors.New("not found")
+var ErrNotFound = errors.New("Resource Not Found")
+var ErrEmptyUrl = errors.New("Empty Url")
+var ErrInvalidUrl = errors.New("Invalid Url")
 
-var ErrEmptyUrl = errors.New("empty")
-var ErrInvalidUrl = errors.New("invalid")
+type APIError struct {
+	Message string `json:"error"`
+}
+
+func ApiJsonError(message string) string {
+	errorResponse := APIError{Message: message}
+	jsonResponse, _ := json.Marshal(errorResponse)
+	return string(jsonResponse)
+}

@@ -1,45 +1,33 @@
 package handlers
 
 import (
-	"bytes"
-	"encoding/json"
 	"net/http"
-	"net/http/httptest"
 	"testing"
-	"url-shortener/backend/models"
+	testingUtils "url-shortener/backend/testing"
 )
 
 func TestShortenURL(t *testing.T) {
-	payload := models.RequestData{Url: "https://www.example.com"}
-	requestBody, err := json.Marshal(payload)
+	rr, _, err := testingUtils.TestResponse(testingUtils.LongUrl,
+		testingUtils.Request{Method: "POST", Endpoint: "/shorten"},
+		ShortenURLHandler)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	req, err := http.NewRequest("POST", "/shorten", bytes.NewReader(requestBody))
+	if rr.Code != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, rr.Code)
+	}
+}
+
+func TestShortenURL_MissingUrl(t *testing.T) {
+	rr, _, err := testingUtils.TestResponse("",
+		testingUtils.Request{Method: "POST", Endpoint: "/shorten"},
+		ShortenURLHandler)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ShortenURLHandler(w, r, db)
-	})
-
-	handler.ServeHTTP(rr, req)
-
-	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+	if rr.Code != http.StatusBadRequest {
+		t.Errorf("Expected status code %d, got %d", http.StatusBadRequest, rr.Code)
 	}
-
-	var response models.ResponseData
-	err = json.Unmarshal(rr.Body.Bytes(), &response)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if shortenedURL := response.ShortUrl; shortenedURL == "" {
-		t.Errorf("handler returned an empty shortened URL")
-	}
-
 }

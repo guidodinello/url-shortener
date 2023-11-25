@@ -12,13 +12,13 @@ func ShortenURLHandler(w http.ResponseWriter, r *http.Request, db database.Datab
 	// Decode the JSON request body into a Message struct
 	var requestMessage models.RequestData
 	if err := json.NewDecoder(r.Body).Decode(&requestMessage); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, models.ApiJsonError(err.Error()), http.StatusBadRequest)
 		return
 	}
 
 	// Validate the URL
 	if requestMessage.Url == "" {
-		http.Error(w, "missing URL", http.StatusBadRequest)
+		http.Error(w, models.ApiJsonError(models.ErrEmptyUrl.Error()), http.StatusBadRequest)
 		return
 	}
 
@@ -27,17 +27,17 @@ func ShortenURLHandler(w http.ResponseWriter, r *http.Request, db database.Datab
 
 	// Save the URL
 	if err := db.SaveURL(requestMessage.Url, shortened); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, models.ApiJsonError(err.Error()), http.StatusInternalServerError)
 		return
 	}
 
 	// Create a response map
-	responseData := models.ResponseData{ShortUrl: shortened}
+	responseData := models.ResponseData{Key: shortened}
 
 	// Encode the response data as JSON
 	jsonResponse, err := json.Marshal(responseData)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, models.ApiJsonError(err.Error()), http.StatusInternalServerError)
 		return
 	}
 
@@ -46,7 +46,7 @@ func ShortenURLHandler(w http.ResponseWriter, r *http.Request, db database.Datab
 
 	// Write the JSON response to the response writer
 	if _, err := w.Write(jsonResponse); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, models.ApiJsonError(err.Error()), http.StatusInternalServerError)
 		return
 	}
 }
