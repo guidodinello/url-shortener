@@ -31,5 +31,5 @@ func main() {
 		handlers.RedirectURLHandler(w, r, db)
 	})
 
-	http.ListenAndServe(":8080", nil)
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
